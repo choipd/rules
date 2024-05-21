@@ -1,5 +1,4 @@
 import requests
-import requests
 from bs4 import BeautifulSoup
 
 def web_crawler(url):
@@ -17,6 +16,7 @@ def web_crawler(url):
 
     # Send a GET request to the specified URL
     response = requests.get(url, headers={'Cache-Control': 'max-age=3600'})
+    response.encoding = response.apparent_encoding
 
     # Check if the request was successful (status code 200)
     if response.status_code == 200:
@@ -25,16 +25,18 @@ def web_crawler(url):
 
         # Extract all the links from the HTML response
         soup = BeautifulSoup(response.text, 'html.parser')
-        links = soup.find_all('a')
+        links = soup.find_all('a')[:3]
         print("Found", len(links), "links")
 
         # Iterate over each link and extract the title
         for link in links:
             href = link.get('href')
             if(href.startswith('https') == False):
-                href = "https://choipd.github.io/hgu-rules-static/" + href
+                href = url + href
             if href.startswith('https'):
                 link_response = requests.get(href)
+                link_response.encoding = link_response.apparent_encoding
+
                 if link_response.status_code == 200:
                     data = extract_data(link_response.text)
                     print(data)
@@ -45,4 +47,5 @@ def web_crawler(url):
         # Handle any errors or exceptions here
         print("Error: Request failed with status code", response.status_code)
 
-web_crawler("https://choipd.github.io/hgu-rules-static")
+
+web_crawler("https://rule.handong.edu/")
