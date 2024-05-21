@@ -10,7 +10,7 @@ def web_crawler(url):
         title_tag = soup.find('title')
         # Extract the title text
         title = title_tag.text if title_tag else None
-        history =
+        # history =
         return {
             "title": title
         }
